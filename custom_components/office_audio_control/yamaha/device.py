@@ -1,8 +1,13 @@
 import asyncio
-from dataclasses import dataclass
 
-from custom_components.office_audio_control.yamaha.response import parse_response, Response, ErrorResponse, OkResponse, \
-    NotifyResponse
+from dataclasses import dataclass
+from enum import Enum
+
+from custom_components.office_audio_control.yamaha.response import (
+    NotifyResponse,
+    OkResponse,
+    parse_response,
+)
 from custom_components.office_audio_control.yamaha.telnet import TelnetDevice
 
 
@@ -19,6 +24,11 @@ class ProductInformation:
 
 class ResponseError(Exception):
     pass
+
+
+class ParameterValueType(Enum):
+    RAW = 0
+    NORMALIZED = 1
 
 
 class YamahaDspDevice(TelnetDevice):
@@ -60,7 +70,7 @@ class YamahaDspDevice(TelnetDevice):
 
     @staticmethod
     async def _handle_notify_response(response: NotifyResponse):
-        print(f"Got NOTIFY response: ", response.__dict__)
+        print("Got NOTIFY response: ", response.__dict__)
 
     async def _send_command(self, command):
         self._writer.write(f"{command}\n".encode())
@@ -69,7 +79,7 @@ class YamahaDspDevice(TelnetDevice):
     async def _wait_for_response(self):
         await self._command_response_received.wait()
 
-    async def _run_command(self, command: str) -> OkResponse | None:
+    async def _run_command(self, command: str) -> OkResponse:
         try:
             # Send the command
             await asyncio.wait_for(self._send_command(command), self._timeout)
@@ -112,5 +122,31 @@ class YamahaDspDevice(TelnetDevice):
             product_name_resp.value,
             serial_number_query.value,
             device_id_query.value,
-            device_name_query.value
+            device_name_query.value,
         )
+
+    async def _query_parameter(
+        self, value_type: ParameterValueType, option1: str, option2: str = "0", option3: str = "0"
+    ) -> OkResponse:
+        command = "get" if value_type is ParameterValueType.RAW else "getn"
+
+        return await self._run_command(f"{command} {option1} {option2} {option3}")
+
+    async def query_parameter_raw(self, option1: str, option2: str = "0", option3: str = "0") -> OkResponse:
+        return await self._query_parameter(ParameterValueType.RAW, option1, option2, option3)
+
+    async def query_parameter_normalized(self, option1: str, option2: str = "0", option3: str = "0") -> OkResponse:
+        return await self._query_parameter(ParameterValueType.NORMALIZED, option1, option2, option3)
+
+    async def _set_parameter(
+        self, value_type: ParameterValueType, option1: str, option2: str, option3: str, value: str
+    ) -> OkResponse:
+        command = "set" if value_type is ParameterValueType.RAW else "setn"
+
+        return await self._run_command(f"{command} {option1} {option2} {option3} {value}")
+
+    async def set_parameter_raw(self, option1: str, option2: str, option3: str, value: str) -> OkResponse:
+        return await self._set_parameter(ParameterValueType.RAW, option1, option2, option3, value)
+
+    async def set_parameter_normalized(self, option1: str, option2: str, option3: str, value: str) -> OkResponse:
+        return await self._set_parameter(ParameterValueType.NORMALIZED, option1, option2, option3, value)

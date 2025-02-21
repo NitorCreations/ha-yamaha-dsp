@@ -1,11 +1,11 @@
 import unittest
 
-from custom_components.office_audio_control.yamaha.response import parse_response, OkResponse, ErrorResponse
+from custom_components.office_audio_control.yamaha.response import ErrorResponse, OkResponse, parse_response
 
 
 class YamahaResponseTest(unittest.TestCase):
     def test_parse_response(self):
-        ok_response = parse_response("OK devstatus runmode \"normal\"\n")
+        ok_response = parse_response('OK devstatus runmode "normal"\n')
         self.assertIsInstance(ok_response, OkResponse)
         self.assertEqual(["OK", "devstatus", "runmode", "normal"], ok_response.parsed_response)
         self.assertEqual("normal", ok_response.value)
@@ -20,5 +20,5 @@ class YamahaResponseTest(unittest.TestCase):
         self.assertEqual("WrongFormat", error_response.error_code)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

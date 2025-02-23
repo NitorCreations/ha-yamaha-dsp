@@ -49,7 +49,6 @@ class YamahaDspDevice(TelnetDevice):
     async def before_disconnect(self):
         # Cancel the response listener task
         self._response_listener_task.cancel()
-        await self._response_listener_task
 
     async def _response_listener(self):
         while True:

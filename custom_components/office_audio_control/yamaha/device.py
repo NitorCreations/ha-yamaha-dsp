@@ -72,8 +72,9 @@ class YamahaDspDevice(TelnetDevice):
         print("Got NOTIFY response: ", response.__dict__)
 
     async def _send_command(self, command):
-        self._writer.write(f"{command}\n".encode())
-        await self._writer.drain()
+        async with self._semaphore:
+            self._writer.write(f"{command}\n".encode())
+            await self._writer.drain()
 
     async def _wait_for_response(self):
         await self._command_response_received.wait()

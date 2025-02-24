@@ -2,12 +2,13 @@ import asyncio
 import logging
 
 from dataclasses import dataclass
-from enum import Enum
 
+from custom_components.yamaha_dsp.yamaha.command import ParameterValueType
 from custom_components.yamaha_dsp.yamaha.response import (
     NotifyResponse,
     OkResponse,
     Response,
+    ResponseError,
     parse_response,
 )
 from custom_components.yamaha_dsp.yamaha.telnet import TelnetDevice
@@ -22,15 +23,6 @@ class ProductInformation:
     serial_number: str
     device_id: str
     device_name: str
-
-
-class ResponseError(Exception):
-    pass
-
-
-class ParameterValueType(Enum):
-    RAW = 0
-    NORMALIZED = 1
 
 
 logger = logging.getLogger(__name__)

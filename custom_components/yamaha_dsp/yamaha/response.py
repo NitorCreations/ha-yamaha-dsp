@@ -34,7 +34,7 @@ def parse_response(response: str) -> Response:
     parsed_response = [part.strip('"') for part in raw_response.split(" ")]
 
     match parsed_response[0]:
-        case "OK":
+        case "OK" | "OKm":
             value = parsed_response[-1]
             return OkResponse(raw_response, parsed_response, value)
         case "NOTIFY":
@@ -45,3 +45,7 @@ def parse_response(response: str) -> Response:
             return ErrorResponse(raw_response, parsed_response, command_name, error_code)
         case _:
             raise ValueError("Unknown response type")
+
+
+class ResponseError(Exception):
+    pass

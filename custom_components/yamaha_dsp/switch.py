@@ -7,7 +7,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 
 from custom_components.yamaha_dsp import (
-    YAMAHA_DSP_CONFIGURATION,
     EntityType,
     RouteConfiguration,
     RuntimeData,
@@ -24,9 +23,10 @@ async def async_setup_entry(_hass: HomeAssistant, entry, async_add_entities):
     runtime_data: RuntimeData = entry.runtime_data
     device = runtime_data.device
     device_info = runtime_data.device_info
+    dsp_configuration = runtime_data.dsp_configuration
 
     # Add entities for each route
-    for route_configuration in YAMAHA_DSP_CONFIGURATION["routes"]:
+    for route_configuration in dsp_configuration.routes:
         async_add_entities([RouteSwitchEntity(route_configuration, device, device_info)])
 
 

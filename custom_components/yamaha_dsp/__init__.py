@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 
@@ -7,7 +8,7 @@ from enum import Enum
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryError, ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceInfo
 
 from custom_components.yamaha_dsp.const import DOMAIN
@@ -36,6 +37,18 @@ class RouteConfiguration:
     index_mute: int
 
 
+@dataclass
+class DspConfiguration:
+    speakers: [SpeakerConfiguration]
+    sources: [SourceConfiguration]
+    routes: [RouteConfiguration]
+
+    def __init__(self):
+        self.speakers = []
+        self.sources = []
+        self.routes = []
+
+
 class EntityType(Enum):
     SPEAKER = "speaker"
     SOURCE = "source"
@@ -44,35 +57,6 @@ class EntityType(Enum):
 
 PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER, Platform.SWITCH]
 UNIQUE_ID_REGEXP = re.compile(r"[\s+]")
-STANDARD_SOURCES = ["Lounge", "Classroom", "Lovelace"]
-YAMAHA_DSP_CONFIGURATION = {
-    "speakers": [
-        SpeakerConfiguration("Kitchen", 33, 47, 48, STANDARD_SOURCES),
-        SpeakerConfiguration("Classroom", 35, 51, 52, STANDARD_SOURCES),
-        SpeakerConfiguration("DJ Booth", 34, 49, 50, STANDARD_SOURCES),
-        SpeakerConfiguration("Lovelace", 42, 65, 66, STANDARD_SOURCES),
-        SpeakerConfiguration("Shannon", 40, 61, 62, ["Lounge", "Classroom", "Lovelace", "TV"]),
-        SpeakerConfiguration("Spa", 36, 53, 54, STANDARD_SOURCES),
-        SpeakerConfiguration("Spa Lounge", 32, 45, 46, ["Lounge", "Classroom", "Lovelace", "TV"]),
-        SpeakerConfiguration("Terrace", 37, 55, 56, STANDARD_SOURCES),
-        SpeakerConfiguration("Lounge", 34, 49, 50, STANDARD_SOURCES),
-    ],
-    "sources": [
-        SourceConfiguration("Classroom device", 14, 15),
-        SourceConfiguration("Lounge DJ mixer", 11, 12),
-        SourceConfiguration("Lounge Mac Mini", 8, 9),
-        SourceConfiguration("Lounge USB input", 17, 18),
-        SourceConfiguration("Lovelace TV", 23, 24),
-        SourceConfiguration("Shannon TV", 26, 27),
-        SourceConfiguration("Spa Lounge TV", 45, 46),
-        SourceConfiguration("Wireless mics", 5, 6),
-    ],
-    "routes": [
-        RouteConfiguration("Wireless mics to classroom", 2),
-        RouteConfiguration("Wireless mics to lounge", 1),
-        RouteConfiguration("Wireless mics to Lovelace", 3),
-    ],
-}
 
 logger = logging.getLogger(__name__)
 
@@ -84,11 +68,49 @@ def create_unique_id(name: str, entity_type: EntityType) -> str:
     return id
 
 
+def create_dsp_configuration(options) -> DspConfiguration:
+    dsp_configuration = DspConfiguration()
+
+    for speaker_configuration in options.get("speaker_configuration") or []:
+        parsed = json.loads(speaker_configuration)
+        dsp_configuration.speakers.append(
+            SpeakerConfiguration(
+                parsed["name"],
+                parsed["index_source"],
+                parsed["index_volume"],
+                parsed["index_mute"],
+                parsed.get("sources") or options["default_speaker_sources"],
+            )
+        )
+
+    for source_configuration in options.get("source_configuration") or []:
+        parsed = json.loads(source_configuration)
+        dsp_configuration.sources.append(
+            SourceConfiguration(
+                parsed["name"],
+                parsed["index_volume"],
+                parsed["index_mute"],
+            )
+        )
+
+    for route_configuration in options.get("route_configuration") or []:
+        parsed = json.loads(route_configuration)
+        dsp_configuration.routes.append(
+            RouteConfiguration(
+                parsed["name"],
+                parsed["index_mute"],
+            )
+        )
+
+    return dsp_configuration
+
+
 @dataclass
 class RuntimeData:
     device: YamahaDspDevice
     product_information: ProductInformation
     device_info: DeviceInfo
+    dsp_configuration: DspConfiguration
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -111,10 +133,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             sw_version=product_information.firmware_version,
         )
 
-        entry.runtime_data = RuntimeData(device, product_information, device_info)
+        # Build the DSP configuration based on the configuration given by the option flow
+        dsp_configuration = create_dsp_configuration(entry.options)
+
+        entry.runtime_data = RuntimeData(device, product_information, device_info, dsp_configuration)
     except ConnectionError as e:
         raise ConfigEntryNotReady("Unable to connect") from e
+    except json.JSONDecodeError as e:
+        raise ConfigEntryError() from e
 
+    # Register a listener for option updates
+    entry.async_on_unload(entry.add_update_listener(entry_update_listener))
+
+    logger.info(f"Initializing entry with runtime data: {entry.runtime_data}")
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
@@ -122,3 +153,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+
+async def entry_update_listener(hass: HomeAssistant, config_entry: ConfigEntry):
+    # Reload the entry when options have been changed
+    await hass.config_entries.async_reload(config_entry.entry_id)

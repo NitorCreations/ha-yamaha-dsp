@@ -11,7 +11,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 
 from custom_components.yamaha_dsp import (
-    YAMAHA_DSP_CONFIGURATION,
     EntityType,
     RuntimeData,
     SourceConfiguration,
@@ -29,13 +28,14 @@ async def async_setup_entry(_hass: HomeAssistant, entry, async_add_entities):
     runtime_data: RuntimeData = entry.runtime_data
     device = runtime_data.device
     device_info = runtime_data.device_info
+    dsp_configuration = runtime_data.dsp_configuration
 
     # Add entities for each speaker
-    for speaker_configuration in YAMAHA_DSP_CONFIGURATION["speakers"]:
+    for speaker_configuration in dsp_configuration.speakers:
         async_add_entities([SpeakerEntity(speaker_configuration, device, device_info)])
 
     # Add entities for each source
-    for source_configuration in YAMAHA_DSP_CONFIGURATION["sources"]:
+    for source_configuration in dsp_configuration.sources:
         async_add_entities([SourceEntity(source_configuration, device, device_info)])
 
 

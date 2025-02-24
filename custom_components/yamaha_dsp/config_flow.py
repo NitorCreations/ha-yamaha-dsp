@@ -4,9 +4,19 @@ from typing import Any
 
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.helpers import selector
+from homeassistant.helpers.selector import TextSelectorConfig
 
-from custom_components.yamaha_dsp.const import CONF_HOST, CONF_PORT, DOMAIN
+from custom_components.yamaha_dsp.const import (
+    CONF_HOST,
+    CONF_PORT,
+    DOMAIN,
+    OPTION_DEFAULT_SPEAKER_SOURCES,
+    OPTION_ROUTE_CONFIGURATION,
+    OPTION_SOURCE_CONFIGURATION,
+    OPTION_SPEAKER_CONFIGURATION,
+)
 from custom_components.yamaha_dsp.yamaha.device import YamahaDspDevice
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
@@ -19,9 +29,10 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 logger = logging.getLogger(__name__)
 
 
-class YamahaDspUserFlow(ConfigFlow, domain=DOMAIN):
+class YamahaDspConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
+    # noinspection PyTypeChecker
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         errors: dict[str, str] = {}
 
@@ -49,3 +60,42 @@ class YamahaDspUserFlow(ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(title=title, data=user_input)
 
         return self.async_show_form(step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors)
+
+    @staticmethod
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
+        return YamahaDspOptionsFlow(config_entry)
+
+
+class YamahaDspOptionsFlow(OptionsFlow):
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        self._config_entry = config_entry
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None):
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        # Load existing values, use defaults if not defined
+        default_speaker_sources = self._config_entry.options.get(OPTION_DEFAULT_SPEAKER_SOURCES) or []
+        speaker_configuration = self._config_entry.options.get(OPTION_SPEAKER_CONFIGURATION) or []
+        source_configuration = self._config_entry.options.get(OPTION_SOURCE_CONFIGURATION) or []
+        route_configuration = self._config_entry.options.get(OPTION_ROUTE_CONFIGURATION) or []
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        OPTION_DEFAULT_SPEAKER_SOURCES, default=default_speaker_sources
+                    ): selector.TextSelector(TextSelectorConfig(multiple=True)),
+                    vol.Optional(OPTION_SPEAKER_CONFIGURATION, default=speaker_configuration): selector.TextSelector(
+                        TextSelectorConfig(multiline=True, multiple=True)
+                    ),
+                    vol.Optional(OPTION_SOURCE_CONFIGURATION, default=source_configuration): selector.TextSelector(
+                        TextSelectorConfig(multiline=True, multiple=True)
+                    ),
+                    vol.Optional(OPTION_ROUTE_CONFIGURATION, default=route_configuration): selector.TextSelector(
+                        TextSelectorConfig(multiline=True, multiple=True)
+                    ),
+                }
+            ),
+        )

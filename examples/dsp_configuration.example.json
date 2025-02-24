@@ -1,0 +1,121 @@
+{
+  "default_sources": [
+    "Lounge",
+    "Classroom",
+    "Lovelace"
+  ],
+  "speakers": [
+    {
+      "name": "Kitchen",
+      "index_source": 33,
+      "index_volume": 47,
+      "index_mute": 48
+    },
+    {
+      "name": "Classroom",
+      "index_source": 35,
+      "index_volume": 51,
+      "index_mute": 52
+    },
+    {
+      "name": "DJ Booth",
+      "index_source": 34,
+      "index_volume": 49,
+      "index_mute": 50
+    },
+    {
+      "name": "Lovelace",
+      "index_source": 42,
+      "index_volume": 65,
+      "index_mute": 66
+    },
+    {
+      "name": "Shannon",
+      "index_source": 40,
+      "index_volume": 61,
+      "index_mute": 62,
+      "sources": ["Lounge", "Classroom", "Lovelace", "TV"]
+    },
+    {
+      "name": "Spa",
+      "index_source": 36,
+      "index_volume": 53,
+      "index_mute": 54
+    },
+    {
+      "name": "Spa Lounge",
+      "index_source": 32,
+      "index_volume": 45,
+      "index_mute": 46,
+      "sources": ["Lounge", "Classroom", "Lovelace", "TV"]
+    },
+    {
+      "name": "Terrace",
+      "index_source": 37,
+      "index_volume": 55,
+      "index_mute": 56
+    },
+    {
+      "name": "Lounge",
+      "index_source": 34,
+      "index_volume": 49,
+      "index_mute": 50
+    }
+  ],
+  "sources": [
+    {
+      "name": "Classroom device",
+      "index_volume": 14,
+      "index_mute": 15
+    },
+    {
+      "name": "Lounge DJ mixer",
+      "index_volume": 11,
+      "index_mute": 12
+    },
+    {
+      "name": "Lounge Mac Mini",
+      "index_volume": 8,
+      "index_mute": 9
+    },
+    {
+      "name": "Lounge USB input",
+      "index_volume": 17,
+      "index_mute": 18
+    },
+    {
+      "name": "Lovelace TV",
+      "index_volume": 23,
+      "index_mute": 24
+    },
+    {
+      "name": "Shannon TV",
+      "index_volume": 26,
+      "index_mute": 27
+    },
+    {
+      "name": "Spa Lounge TV",
+      "index_volume": 45,
+      "index_mute": 46
+    },
+    {
+      "name": "Wireless mics",
+      "index_volume": 5,
+      "index_mute": 6
+    }
+  ],
+  "routes": [
+    {
+      "name": "Wireless mics to classroom",
+      "index_mute": 2
+    },
+    {
+      "name": "Wireless mics to lounge",
+      "index_mute": 1
+    },
+    {
+      "name": "Wireless mics to Lovelace",
+      "index_mute": 3
+    }
+  ]
+}

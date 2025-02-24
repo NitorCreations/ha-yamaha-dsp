@@ -44,7 +44,7 @@ class RouteSwitchEntity(SwitchEntity):
 
     @property
     def name(self) -> str:
-        return f"{self._config.name} source"
+        return f"{self._config.name} route"
 
     @property
     def unique_id(self) -> str:

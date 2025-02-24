@@ -1,7 +1,9 @@
 import logging
+
 from typing import Any
 
 import voluptuous as vol
+
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 
 from custom_components.yamaha_dsp.const import CONF_HOST, CONF_PORT, DOMAIN
@@ -20,7 +22,7 @@ logger = logging.getLogger(__name__)
 class YamahaDspUserFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
-    async def async_step_user(self, user_input: dict[str, Any] | None = None):
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         errors: dict[str, str] = {}
 
         if user_input is not None:

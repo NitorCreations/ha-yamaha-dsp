@@ -6,9 +6,8 @@ class Response:
     raw_response: str
     parsed_response: list[str]
 
-
 @dataclass
-class OkResponse(Response):
+class ValueResponse(Response):
     value: str
 
     def get_int_value(self) -> int:
@@ -17,9 +16,13 @@ class OkResponse(Response):
     def get_bool_value(self) -> bool:
         return bool(self.get_int_value())
 
+@dataclass
+class OkResponse(ValueResponse):
+    pass
+
 
 @dataclass
-class NotifyResponse(Response):
+class NotifyResponse(ValueResponse):
     pass
 
 
@@ -38,7 +41,8 @@ def parse_response(response: str) -> Response:
             value = parsed_response[-1]
             return OkResponse(raw_response, parsed_response, value)
         case "NOTIFY":
-            return NotifyResponse(raw_response, parsed_response)
+            value = parsed_response[-1]
+            return NotifyResponse(raw_response, parsed_response, value)
         case "ERROR":
             command_name = parsed_response[1]
             error_code = parsed_response[2]

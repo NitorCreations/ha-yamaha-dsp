@@ -1,6 +1,6 @@
 import unittest
 
-from custom_components.yamaha_dsp.yamaha.response import ErrorResponse, OkResponse, parse_response
+from custom_components.yamaha_dsp.yamaha.response import ErrorResponse, OkResponse, parse_response, NotifyResponse
 
 
 class YamahaResponseTest(unittest.TestCase):
@@ -18,6 +18,11 @@ class YamahaResponseTest(unittest.TestCase):
         complex_ok_response = parse_response('OK ssinfo 0 "" reserve "" ""' + "\n")
         self.assertIsInstance(ok_response, OkResponse)
         self.assertEqual(["OK", "ssinfo", "0", "", "reserve", "", ""], complex_ok_response.parsed_response)
+
+        notify_response = parse_response('NOTIFY set MTX:Index_33 0 0 2 "2"' + "\n")
+        self.assertIsInstance(notify_response, NotifyResponse)
+        self.assertEqual(["NOTIFY", "set", "MTX:Index_33", "0", "0", "2", "2"], notify_response.parsed_response)
+        self.assertEqual(2, notify_response.get_int_value())
 
         error_response = parse_response("ERROR event WrongFormat")
         self.assertIsInstance(error_response, ErrorResponse)

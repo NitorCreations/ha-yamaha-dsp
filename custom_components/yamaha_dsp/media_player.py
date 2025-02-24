@@ -44,7 +44,7 @@ class YamahaDspMediaPlayerEntity(MediaPlayerEntity):
         self._device = device
         self._device_info = device_info
 
-        self._state = MediaPlayerState.PLAYING
+        self._state = MediaPlayerState.IDLE
         self._volume = 0
         self._muted = False
 
@@ -72,6 +72,8 @@ class YamahaDspMediaPlayerEntity(MediaPlayerEntity):
         return self._muted
 
     async def async_update(self) -> None:
+        self._state = MediaPlayerState.PLAYING
+
         volume_resp = await self._device.query_parameter_normalized(self._volume_param)
         self._volume = volume_resp.get_int_value()
         is_on_resp = await self._device.query_parameter_raw(self._mute_param)

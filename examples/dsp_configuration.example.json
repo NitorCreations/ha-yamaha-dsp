@@ -60,6 +60,12 @@
       "index_source": 34,
       "index_volume": 49,
       "index_mute": 50
+    },
+    {
+      "name": "Welcome",
+      "index_source": 38,
+      "index_volume": 57,
+      "index_mute": 58
     }
   ],
   "sources": [

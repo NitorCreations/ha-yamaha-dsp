@@ -1,6 +1,6 @@
 {
-  "domain": "office_audio_control",
-  "name": "Office audio control",
+  "domain": "yamaha_dsp",
+  "name": "Yamaha DSP",
   "version": "0.1.0",
   "codeowners": [
     "@Jalle19"
@@ -8,7 +8,7 @@
   "config_flow": true,
   "integration_type": "device",
   "dependencies": [],
-  "documentation": "https://www.home-assistant.io/integrations/office_audio_control",
+  "documentation": "https://www.home-assistant.io/integrations/yamaha_dsp",
   "homekit": {},
   "iot_class": "local_polling",
   "requirements": [],

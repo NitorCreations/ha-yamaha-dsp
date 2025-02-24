@@ -1,6 +1,6 @@
 import asyncio
 
-from custom_components.office_audio_control.yamaha.device import YamahaDspDevice
+from custom_components.yamaha_dsp.yamaha.device import YamahaDspDevice
 
 
 async def main():

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from homeassistant.components.media_player import MediaPlayerEntity, MediaPlayerEntityFeature
 from homeassistant.core import HomeAssistant
 
-from custom_components.office_audio_control import RuntimeData, YamahaDspDevice
+from custom_components.yamaha_dsp import RuntimeData, YamahaDspDevice
 
 
 @dataclass
@@ -17,7 +17,7 @@ class SpeakerConfiguration:
 
 
 STANDARD_SOURCES = ["Lounge", "Classroom", "Lovelace"]
-OFFICE_AUDIO_CONTROL_CONFIGURATION = {
+yamaha_dsp_CONFIGURATION = {
     'speakers': [
         SpeakerConfiguration("Kitchen speakers", 33, 47, 48, STANDARD_SOURCES),
         SpeakerConfiguration("Classroom speakers", 35, 51, 52, STANDARD_SOURCES),
@@ -33,7 +33,7 @@ async def async_setup_entry(_hass: HomeAssistant, entry, async_add_entities):
     device = runtime_data.device
 
     # Add entities for each speaker
-    for speaker_configuration in OFFICE_AUDIO_CONTROL_CONFIGURATION["speakers"]:
+    for speaker_configuration in yamaha_dsp_CONFIGURATION["speakers"]:
         async_add_entities([SpeakerEntity(speaker_configuration, device)])
 
 

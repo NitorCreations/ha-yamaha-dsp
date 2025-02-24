@@ -3,12 +3,12 @@ import asyncio
 from dataclasses import dataclass
 from enum import Enum
 
-from custom_components.office_audio_control.yamaha.response import (
+from custom_components.yamaha_dsp.yamaha.response import (
     NotifyResponse,
     OkResponse,
     parse_response,
 )
-from custom_components.office_audio_control.yamaha.telnet import TelnetDevice
+from custom_components.yamaha_dsp.yamaha.telnet import TelnetDevice
 
 
 @dataclass

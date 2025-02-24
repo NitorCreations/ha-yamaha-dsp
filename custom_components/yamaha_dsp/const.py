@@ -1,4 +1,4 @@
-DOMAIN = "office_audio_control"
+DOMAIN = "yamaha_dsp"
 
 CONF_HOST = "host"
 CONF_PORT = "port"

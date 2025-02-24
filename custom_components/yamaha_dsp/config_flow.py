@@ -4,8 +4,8 @@ from typing import Any
 import voluptuous as vol
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 
-from custom_components.office_audio_control.const import CONF_HOST, CONF_PORT, DOMAIN
-from custom_components.office_audio_control.yamaha.device import YamahaDspDevice
+from custom_components.yamaha_dsp.const import CONF_HOST, CONF_PORT, DOMAIN
+from custom_components.yamaha_dsp.yamaha.device import YamahaDspDevice
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
@@ -17,7 +17,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 logger = logging.getLogger(__name__)
 
 
-class OfficeAudioControlUserFlow(ConfigFlow, domain=DOMAIN):
+class YamahaDspUserFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):

@@ -1,6 +1,6 @@
 import unittest
 
-from custom_components.office_audio_control.yamaha.response import ErrorResponse, OkResponse, parse_response
+from custom_components.yamaha_dsp.yamaha.response import ErrorResponse, OkResponse, parse_response
 
 
 class YamahaResponseTest(unittest.TestCase):

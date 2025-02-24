@@ -6,7 +6,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
-from custom_components.office_audio_control.yamaha.device import YamahaDspDevice
+from custom_components.yamaha_dsp.yamaha.device import YamahaDspDevice
 
 PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER]
 

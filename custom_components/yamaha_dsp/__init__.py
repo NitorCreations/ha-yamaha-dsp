@@ -152,7 +152,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    # Disconnect from the device when unloading, otherwise we'll get a
+    # "Task was destroyed but it is pending" error
+    if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+        runtime_data: RuntimeData = entry.runtime_data
+        await runtime_data.device.disconnect()
+
+    return unload_ok
 
 
 async def entry_update_listener(hass: HomeAssistant, config_entry: ConfigEntry):

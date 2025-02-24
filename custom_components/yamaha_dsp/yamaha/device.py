@@ -33,7 +33,7 @@ class YamahaDspDevice(TelnetDevice):
         super().__init__(host, port)
         self._timeout = timeout
         self._response_listener_task: asyncio.Task | None = None
-        self._last_command_response: Response | None = None
+        self._last_command_response: Response | Exception | None = None
         self._command_response_received = asyncio.Event()
 
     async def after_connect(self):
@@ -56,12 +56,17 @@ class YamahaDspDevice(TelnetDevice):
             if raw_resp is None:
                 return
 
-            resp = parse_response(raw_resp)
+            try:
+                resp = parse_response(raw_resp)
 
-            if isinstance(resp, NotifyResponse):
-                await self._handle_notify_response(resp)
-            else:
-                self._last_command_response = resp
+                if isinstance(resp, NotifyResponse):
+                    await self._handle_notify_response(resp)
+                else:
+                    self._last_command_response = resp
+                    self._command_response_received.set()
+            except ValueError as e:
+                logger.error(f"Response listener received a response it couldn't handle: {e}")
+                self._last_command_response = e
                 self._command_response_received.set()
 
     @staticmethod
@@ -86,10 +91,12 @@ class YamahaDspDevice(TelnetDevice):
                 await asyncio.wait_for(self._wait_for_response(), self._timeout)
                 resp = self._last_command_response
                 self._command_response_received.clear()
-                logger.debug(f"Received response: {resp.raw_response}")
 
                 if isinstance(resp, OkResponse):
+                    logger.debug(f"Received response: {resp.raw_response}")
                     return resp
+                elif isinstance(resp, Exception):
+                    raise ResponseError(resp) from resp
                 else:
                     raise ResponseError(resp)
         except TimeoutError:

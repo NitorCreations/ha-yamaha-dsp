@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from dataclasses import dataclass
 from enum import Enum
@@ -6,6 +7,7 @@ from enum import Enum
 from custom_components.yamaha_dsp.yamaha.response import (
     NotifyResponse,
     OkResponse,
+    Response,
     parse_response,
 )
 from custom_components.yamaha_dsp.yamaha.telnet import TelnetDevice
@@ -31,12 +33,15 @@ class ParameterValueType(Enum):
     NORMALIZED = 1
 
 
+logger = logging.getLogger(__name__)
+
+
 class YamahaDspDevice(TelnetDevice):
     def __init__(self, host: str, port: int, timeout: int = 5):
         super().__init__(host, port)
         self._timeout = timeout
         self._response_listener_task: asyncio.Task | None = None
-        self._last_command_response = None
+        self._last_command_response: Response | None = None
         self._command_response_received = asyncio.Event()
 
     async def after_connect(self):
@@ -69,30 +74,32 @@ class YamahaDspDevice(TelnetDevice):
 
     @staticmethod
     async def _handle_notify_response(response: NotifyResponse):
-        print("Got NOTIFY response: ", response.__dict__)
+        logger.debug(f"Got NOTIFY response: {response.raw_response}")
 
     async def _send_command(self, command):
-        async with self._semaphore:
-            self._writer.write(f"{command}\n".encode())
-            await self._writer.drain()
+        self._writer.write(f"{command}\n".encode())
+        await self._writer.drain()
 
     async def _wait_for_response(self):
         await self._command_response_received.wait()
 
     async def _run_command(self, command: str) -> OkResponse:
         try:
-            # Send the command
-            await asyncio.wait_for(self._send_command(command), self._timeout)
+            async with self._semaphore:
+                logger.debug(f"Sending command: {command}")
+                # Send the command
+                await asyncio.wait_for(self._send_command(command), self._timeout)
 
-            # Wait for the response
-            await asyncio.wait_for(self._wait_for_response(), self._timeout)
-            resp = self._last_command_response
-            self._command_response_received.clear()
+                # Wait for the response
+                await asyncio.wait_for(self._wait_for_response(), self._timeout)
+                resp = self._last_command_response
+                self._command_response_received.clear()
+                logger.debug(f"Received response: {resp.raw_response}")
 
-            if isinstance(resp, OkResponse):
-                return resp
-            else:
-                raise ResponseError(resp)
+                if isinstance(resp, OkResponse):
+                    return resp
+                else:
+                    raise ResponseError(resp)
         except TimeoutError:
             raise RuntimeError("Command timed out")
         except (ConnectionResetError, BrokenPipeError):
@@ -100,7 +107,7 @@ class YamahaDspDevice(TelnetDevice):
             raise RuntimeError("Connection was reset")
         finally:
             if not self._connected:
-                print("Connection seems to be broken, will attempt to reconnect")
+                logger.error("Connection seems to be broken, will attempt to reconnect")
                 await self.reconnect()
 
     async def _perform_handshake(self):

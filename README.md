@@ -1,5 +1,8 @@
 # ha-yamaha-dsp
 
+[![Linting](https://github.com/NitorCreations/ha-yamaha-dsp/actions/workflows/ruff.yaml/badge.svg)](https://github.com/NitorCreations/ha-yamaha-dsp/actions/workflows/ruff.yaml)
+[![Tests](https://github.com/NitorCreations/ha-yamaha-dsp/actions/workflows/unittest.yaml/badge.svg)](https://github.com/NitorCreations/ha-yamaha-dsp/actions/workflows/unittest.yaml)
+
 Home Assistant integration for controlling Yamaha DSP processors such as the MRX7-D.
 
 ## Supported devices

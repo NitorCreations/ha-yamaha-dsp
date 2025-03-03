@@ -3,6 +3,8 @@ import logging
 
 from dataclasses import dataclass
 
+from pytelnetdevice import TelnetDevice
+
 from custom_components.yamaha_dsp.yamaha.command import ParameterValueType
 from custom_components.yamaha_dsp.yamaha.response import (
     NotifyResponse,
@@ -11,7 +13,6 @@ from custom_components.yamaha_dsp.yamaha.response import (
     ResponseError,
     parse_response,
 )
-from custom_components.yamaha_dsp.yamaha.telnet import TelnetDevice
 
 
 @dataclass

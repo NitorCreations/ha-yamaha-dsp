@@ -22,6 +22,11 @@ The following entity types can be configured:
 * sources (media player)
 * routes (on/off switches)
 
+## Development
+
+Development is done the same way as any custom Home Assistant integration. For a more detailed description, see 
+e.g. https://github.com/NitorCreations/ha-extron?tab=readme-ov-file#development.
+
 ## License
 
 GNU GENERAL PUBLIC LICENSE version 3

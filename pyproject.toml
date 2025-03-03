@@ -1,3 +1,18 @@
+[project]
+name = "ha-yamaha-dsp"
+version = "0.1.0"
+description = "Home Assistant integration for controlling Yamaha DSP processors such as the MRX7-D"
+readme = "README.md"
+authors = [
+    {name = "Sam Stenvall", email = "sam.stenvall@nitor.com"},
+]
+requires-python = ">=3.13"
+dependencies = [
+    "homeassistant",
+    "bidict",
+    "pytelnetdevice @ git+https://github.com/NitorCreations/pytelnetdevice@daa840f"
+]
+
 [tool.ruff]
 # https://github.com/astral-sh/ruff#configuration
 include = ["*.py", "*.pyi", "**/pyproject.toml"]

@@ -1,6 +1,6 @@
 import unittest
 
-from custom_components.yamaha_dsp.yamaha.response import ErrorResponse, OkResponse, parse_response, NotifyResponse
+from custom_components.yamaha_dsp.yamaha.response import ErrorResponse, NotifyResponse, OkResponse, parse_response
 
 
 class YamahaResponseTest(unittest.TestCase):

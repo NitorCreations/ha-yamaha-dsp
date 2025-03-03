@@ -6,6 +6,7 @@ class Response:
     raw_response: str
     parsed_response: list[str]
 
+
 @dataclass
 class ValueResponse(Response):
     value: str
@@ -15,6 +16,7 @@ class ValueResponse(Response):
 
     def get_bool_value(self) -> bool:
         return bool(self.get_int_value())
+
 
 @dataclass
 class OkResponse(ValueResponse):

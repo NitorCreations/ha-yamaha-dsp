@@ -19,7 +19,7 @@
     "step": {
       "init": {
         "title": "DSP configuration",
-        "description": "Configure the DSP using. See the documentation for details about the format, as well as examples.",
+        "description": "Configure the DSP. See the documentation for details about the format, as well as examples.",
         "data": {
           "default_speaker_sources": "Default speaker sources",
           "speaker_configuration": "Speaker configuration",

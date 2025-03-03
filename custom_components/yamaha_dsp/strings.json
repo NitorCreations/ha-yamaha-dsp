@@ -14,5 +14,22 @@
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "DSP configuration",
+        "description": "Configure the DSP. See the documentation for details about the format, as well as examples.",
+        "data": {
+          "default_speaker_sources": "Default speaker sources",
+          "speaker_configuration": "Speaker configuration",
+          "source_configuration": "Source configuration",
+          "route_configuration": "Route configuration"
+        },
+        "data_description": {
+          "default_speaker_sources": "Speaker source list to use if not explicitly defined in speaker configuration"
+        }
+      }
+    }
   }
 }

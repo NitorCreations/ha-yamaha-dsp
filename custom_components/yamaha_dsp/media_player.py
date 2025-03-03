@@ -146,3 +146,7 @@ class SourceEntity(YamahaDspMediaPlayerEntity):
     @property
     def unique_id(self) -> str:
         return create_unique_id(self._config.name, EntityType.SOURCE)
+
+    @property
+    def icon(self) -> str:
+        return "mdi:volume-source"

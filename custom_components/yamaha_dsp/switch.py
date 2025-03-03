@@ -51,6 +51,10 @@ class RouteSwitchEntity(SwitchEntity):
         return create_unique_id(self._config.name, EntityType.ROUTE)
 
     @property
+    def icon(self) -> str:
+        return "mdi:arrow-decision"
+
+    @property
     def device_info(self) -> DeviceInfo:
         return self._device_info
 

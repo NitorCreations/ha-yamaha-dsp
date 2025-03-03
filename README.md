@@ -22,6 +22,35 @@ The following entity types can be configured:
 * sources (media player)
 * routes (on/off switches)
 
+Entities are configured using JSON, like this:
+
+A speaker:
+```json
+{
+  "name": "Kitchen",
+  "index_source": 33,
+  "index_volume": 47,
+  "index_mute": 48
+}
+```
+
+A source:
+```json
+{
+  "name": "Lounge DJ mixer",
+  "index_volume": 11,
+  "index_mute": 12
+}
+```
+
+A route:
+```json
+{
+  "name": "Wireless mics to classroom",
+  "index_mute": 2
+}
+```
+
 ## Development
 
 Development is done the same way as any custom Home Assistant integration. For a more detailed description, see 

@@ -1,7 +1,7 @@
 {
   "domain": "yamaha_dsp",
   "name": "Yamaha DSP",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "codeowners": [
     "@Jalle19"
   ],

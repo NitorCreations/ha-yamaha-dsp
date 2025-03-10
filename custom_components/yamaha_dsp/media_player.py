@@ -127,8 +127,11 @@ class SpeakerEntity(YamahaDspMediaPlayerEntity):
 
     async def async_select_source(self, source: str) -> None:
         source_idx = self._source_bidict.inverse.get(source)
-        logger.debug(f"Switching source on {self.name} to {source} ({source_idx})")
-        await self._device.set_parameter_raw(self._source_param, "0", "0", str(source_idx))
+        if source_idx is None:
+            logger.error(f"Asked to switch to invalid source {source}")
+        else:
+            logger.debug(f"Switching source on {self.name} to {source} ({source_idx})")
+            await self._device.set_parameter_raw(self._source_param, "0", "0", str(source_idx))
 
 
 class SourceEntity(YamahaDspMediaPlayerEntity):

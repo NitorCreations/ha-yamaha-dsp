@@ -1,6 +1,6 @@
 [project]
 name = "ha-yamaha-dsp"
-version = "0.1.2"
+version = "0.1.3"
 description = "Home Assistant integration for controlling Yamaha DSP processors such as the MRX7-D"
 readme = "README.md"
 authors = [

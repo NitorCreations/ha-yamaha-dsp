@@ -24,6 +24,7 @@ The following entity types can be configured:
 * speakers (media player, with source selection)
 * sources (media player)
 * routes (on/off switches)
+* routers (select, one source selection per sink)
 
 Entities are configured using JSON, like this:
 
@@ -53,6 +54,22 @@ A route:
   "index_mute": 2
 }
 ```
+
+A router sink:
+```json
+{
+  "name": "Classroom sink",
+  "index_source": 20019,
+  "sources": [
+    { "label": "NONE", "value": 0 },
+    { "label": "Mic bus", "value": 3 },
+    { "label": "YDIF IN 1", "value": 17 }
+  ]
+}
+```
+
+Router entities behave like a matrix selector per sink: each sink exposes the allowed source options that
+you configure, and exactly one source can be selected at a time for each sink.
 
 ## Development
 

@@ -14,6 +14,7 @@ from custom_components.yamaha_dsp.const import (
     DOMAIN,
     OPTION_DEFAULT_SPEAKER_SOURCES,
     OPTION_ROUTE_CONFIGURATION,
+    OPTION_ROUTER_CONFIGURATION,
     OPTION_SOURCE_CONFIGURATION,
     OPTION_SPEAKER_CONFIGURATION,
 )
@@ -79,6 +80,7 @@ class YamahaDspOptionsFlow(OptionsFlow):
         speaker_configuration = self._config_entry.options.get(OPTION_SPEAKER_CONFIGURATION) or []
         source_configuration = self._config_entry.options.get(OPTION_SOURCE_CONFIGURATION) or []
         route_configuration = self._config_entry.options.get(OPTION_ROUTE_CONFIGURATION) or []
+        router_configuration = self._config_entry.options.get(OPTION_ROUTER_CONFIGURATION) or []
 
         return self.async_show_form(
             step_id="init",
@@ -94,6 +96,9 @@ class YamahaDspOptionsFlow(OptionsFlow):
                         TextSelectorConfig(multiline=True, multiple=True)
                     ),
                     vol.Optional(OPTION_ROUTE_CONFIGURATION, default=route_configuration): selector.TextSelector(
+                        TextSelectorConfig(multiline=True, multiple=True)
+                    ),
+                    vol.Optional(OPTION_ROUTER_CONFIGURATION, default=router_configuration): selector.TextSelector(
                         TextSelectorConfig(multiline=True, multiple=True)
                     ),
                 }

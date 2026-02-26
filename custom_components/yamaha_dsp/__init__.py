@@ -38,24 +38,40 @@ class RouteConfiguration:
 
 
 @dataclass
+class RouterSourceConfiguration:
+    label: str
+    value: int
+
+
+@dataclass
+class RouterConfiguration:
+    name: str
+    index_source: int
+    sources: list[RouterSourceConfiguration]
+
+
+@dataclass
 class DspConfiguration:
     speakers: [SpeakerConfiguration]
     sources: [SourceConfiguration]
     routes: [RouteConfiguration]
+    routers: [RouterConfiguration]
 
     def __init__(self):
         self.speakers = []
         self.sources = []
         self.routes = []
+        self.routers = []
 
 
 class EntityType(Enum):
     SPEAKER = "speaker"
     SOURCE = "source"
     ROUTE = "route"
+    ROUTER = "router"
 
 
-PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER, Platform.SWITCH]
+PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER, Platform.SWITCH, Platform.SELECT]
 UNIQUE_ID_REGEXP = re.compile(r"[\s+]")
 
 logger = logging.getLogger(__name__)
@@ -102,6 +118,30 @@ def create_dsp_configuration(options) -> DspConfiguration:
             )
         )
 
+    for router_configuration in options.get("router_configuration") or []:
+        parsed = json.loads(router_configuration)
+        sources: list[RouterSourceConfiguration] = []
+        seen_labels: set[str] = set()
+
+        for source in parsed["sources"]:
+            label = source["label"]
+            value = int(source["value"])
+            if label in seen_labels:
+                raise ValueError(f"Duplicate router source label '{label}' in '{parsed['name']}'")
+            seen_labels.add(label)
+            sources.append(RouterSourceConfiguration(label=label, value=value))
+
+        if not sources:
+            raise ValueError(f"Router '{parsed['name']}' must define at least one source")
+
+        dsp_configuration.routers.append(
+            RouterConfiguration(
+                parsed["name"],
+                parsed["index_source"],
+                sources,
+            )
+        )
+
     return dsp_configuration
 
 
@@ -140,6 +180,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     except ConnectionError as e:
         raise ConfigEntryNotReady("Unable to connect") from e
     except json.JSONDecodeError as e:
+        raise ConfigEntryError() from e
+    except ValueError as e:
         raise ConfigEntryError() from e
 
     # Register a listener for option updates

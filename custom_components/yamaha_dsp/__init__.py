@@ -52,10 +52,10 @@ class RouterConfiguration:
 
 @dataclass
 class DspConfiguration:
-    speakers: [SpeakerConfiguration]
-    sources: [SourceConfiguration]
-    routes: [RouteConfiguration]
-    routers: [RouterConfiguration]
+    speakers: list[SpeakerConfiguration]
+    sources: list[SourceConfiguration]
+    toggles: list[ToggleConfiguration]
+    routers: list[RouterConfiguration]
 
     def __init__(self):
         self.speakers = []

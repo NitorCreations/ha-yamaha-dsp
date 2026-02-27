@@ -23,7 +23,7 @@ The following entity types can be configured:
 
 * speakers (media player, with source selection)
 * sources (media player)
-* routes (on/off switches)
+* toggles (on/off switches)
 * routers (select, one source selection per sink)
 
 Entities are configured using JSON, like this:
@@ -47,11 +47,11 @@ A source:
 }
 ```
 
-A route:
+A toggle:
 ```json
 {
   "name": "Wireless mics to classroom",
-  "index_mute": 2
+  "index_toggle": 2
 }
 ```
 

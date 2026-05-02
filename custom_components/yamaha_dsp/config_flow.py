@@ -13,10 +13,10 @@ from custom_components.yamaha_dsp.const import (
     CONF_PORT,
     DOMAIN,
     OPTION_DEFAULT_SPEAKER_SOURCES,
-    OPTION_ROUTE_CONFIGURATION,
     OPTION_ROUTER_CONFIGURATION,
     OPTION_SOURCE_CONFIGURATION,
     OPTION_SPEAKER_CONFIGURATION,
+    OPTION_TOGGLE_CONFIGURATION,
 )
 from custom_components.yamaha_dsp.yamaha.device import YamahaDspDevice
 
@@ -79,7 +79,7 @@ class YamahaDspOptionsFlow(OptionsFlow):
         default_speaker_sources = self._config_entry.options.get(OPTION_DEFAULT_SPEAKER_SOURCES) or []
         speaker_configuration = self._config_entry.options.get(OPTION_SPEAKER_CONFIGURATION) or []
         source_configuration = self._config_entry.options.get(OPTION_SOURCE_CONFIGURATION) or []
-        route_configuration = self._config_entry.options.get(OPTION_ROUTE_CONFIGURATION) or []
+        toggle_configuration = self._config_entry.options.get(OPTION_TOGGLE_CONFIGURATION) or []
         router_configuration = self._config_entry.options.get(OPTION_ROUTER_CONFIGURATION) or []
 
         return self.async_show_form(
@@ -95,7 +95,7 @@ class YamahaDspOptionsFlow(OptionsFlow):
                     vol.Optional(OPTION_SOURCE_CONFIGURATION, default=source_configuration): selector.TextSelector(
                         TextSelectorConfig(multiline=True, multiple=True)
                     ),
-                    vol.Optional(OPTION_ROUTE_CONFIGURATION, default=route_configuration): selector.TextSelector(
+                    vol.Optional(OPTION_TOGGLE_CONFIGURATION, default=toggle_configuration): selector.TextSelector(
                         TextSelectorConfig(multiline=True, multiple=True)
                     ),
                     vol.Optional(OPTION_ROUTER_CONFIGURATION, default=router_configuration): selector.TextSelector(

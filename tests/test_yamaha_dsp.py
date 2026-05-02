@@ -8,12 +8,20 @@ class UtilsTests(unittest.TestCase):
         self.assertEqual("kitchen_speaker", create_unique_id("Kitchen", EntityType.SPEAKER))
         (self.assertEqual("lounge_usb_input_source", create_unique_id("Lounge USB input", EntityType.SOURCE)),)
         self.assertEqual(
-            "wireless_mics_to_lovelace_route", create_unique_id("Wireless mics to Lovelace", EntityType.ROUTE)
+            "wireless_mics_to_lovelace_toggle", create_unique_id("Wireless mics to Lovelace", EntityType.TOGGLE)
         )
         self.assertEqual("classroom_sink_router", create_unique_id("Classroom sink", EntityType.ROUTER))
 
-    def test_router_configuration_parsing(self):
+    def test_configuration_parsing(self):
         options = {
+            "toggle_configuration": [
+                """
+                {
+                    "name": "Some toggle",
+                    "index_toggle": 109
+                }
+                """
+            ],
             "router_configuration": [
                 """
                 {
@@ -29,6 +37,13 @@ class UtilsTests(unittest.TestCase):
         }
         config = create_dsp_configuration(options)
 
+        # Check toggles
+        self.assertEqual(1, len(config.toggles))
+        toggle = config.toggles[0]
+        self.assertEqual("Some toggle", toggle.name)
+        self.assertEqual(109, toggle.index_toggle)
+
+        # Check routers
         self.assertEqual(1, len(config.routers))
         router = config.routers[0]
         self.assertEqual("Classroom sink", router.name)

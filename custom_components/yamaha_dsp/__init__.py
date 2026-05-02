@@ -32,9 +32,9 @@ class SourceConfiguration:
 
 
 @dataclass
-class RouteConfiguration:
+class ToggleConfiguration:
     name: str
-    index_mute: int
+    index_toggle: int
 
 
 @dataclass
@@ -52,22 +52,22 @@ class RouterConfiguration:
 
 @dataclass
 class DspConfiguration:
-    speakers: [SpeakerConfiguration]
-    sources: [SourceConfiguration]
-    routes: [RouteConfiguration]
-    routers: [RouterConfiguration]
+    speakers: list[SpeakerConfiguration]
+    sources: list[SourceConfiguration]
+    toggles: list[ToggleConfiguration]
+    routers: list[RouterConfiguration]
 
     def __init__(self):
         self.speakers = []
         self.sources = []
-        self.routes = []
+        self.toggles = []
         self.routers = []
 
 
 class EntityType(Enum):
     SPEAKER = "speaker"
     SOURCE = "source"
-    ROUTE = "route"
+    TOGGLE = "toggle"
     ROUTER = "router"
 
 
@@ -109,12 +109,12 @@ def create_dsp_configuration(options) -> DspConfiguration:
             )
         )
 
-    for route_configuration in options.get("route_configuration") or []:
-        parsed = json.loads(route_configuration)
-        dsp_configuration.routes.append(
-            RouteConfiguration(
+    for toggle_configuration in options.get("toggle_configuration") or []:
+        parsed = json.loads(toggle_configuration)
+        dsp_configuration.toggles.append(
+            ToggleConfiguration(
                 parsed["name"],
-                parsed["index_mute"],
+                parsed["index_toggle"],
             )
         )
 
